@@ -3,23 +3,33 @@ const fs = require("fs");
 
 const FRONT_END_ADDRESSES_FILE =
   "../nextjs-nft-marketplace/src/constants/networkMapping.json";
-// const FRONT_END_ABI_FILE =
-//   "../nextjs-nft-marketplace/src/constants/networkMapping.json";
+const FRONT_END_ABI_FILE = "../nextjs-nft-marketplace/src/constants/";
 
 module.exports = async () => {
   if (process.env.UPDATE_FRONT_END) {
     console.log("Updating front end...");
     await updateContractAddresses();
-    // await updateAbi();
+    await updateAbi();
   }
 };
 
-// async function updateAbi() {
-//   const nftMarketplace = await ethers.getContract("Raffle");
-//   const abiArray = nftMarketplace.interface.fragments;
-//   fs.writeFileSync(FRONT_END_ABI_FILE, JSON.stringify(abiArray));
-//   console.log("Updating ABI in front end...");
-// }
+async function updateAbi() {
+  const nftMarketplace = await ethers.getContract("NftMarketplace");
+  const abiArray = nftMarketplace.interface.fragments;
+  fs.writeFileSync(
+    `${FRONT_END_ABI_FILE}NftMarketplace.json`,
+    JSON.stringify(abiArray)
+  );
+
+  const basicNft = await ethers.getContract("BasicNft");
+  const abiArray2 = basicNft.interface.fragments;
+  fs.writeFileSync(
+    `${FRONT_END_ABI_FILE}BasicNft.json`,
+    JSON.stringify(abiArray2)
+  );
+
+  console.log("Updating ABI in front end...");
+}
 
 async function updateContractAddresses() {
   const nftMarketplace = await ethers.getContract("NftMarketplace");
